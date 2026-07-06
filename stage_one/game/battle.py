@@ -1,52 +1,43 @@
-from stage_one.game.battle_events import BattleEvents
+from .battle_events import Events
+from .ships_preparation import ShipsPreparation
 
 
-class Battle:
-    def __init__(self, player_ship, enemy_ship):
-        self.player = player_ship
-        self.enemy = enemy_ship
-        self.events = BattleEvents(player_ship, enemy_ship)
+class Battle():
+    def __init__(self):
+        self.preparation = ShipsPreparation()
+        self.player_ship, self.enemy_ship = self.preparation.get_ships()
+        self.events = Events()
 
     def fight(self):
-        """Основной цикл боя"""
-        print('\n' + '=' * 60)
-        print('НАЧАЛО БИТВЫ')
-        print('=' * 60)
-        print(f'{self.player.name} VS {self.enemy.name}\n')
+        print('\n___НАЧАЛО БИТВЫ___')
+        print(f'{self.player_ship.name} VS {self.enemy_ship.name}\n')
 
         round_num = 1
-        while self.player.is_alive() and self.enemy.is_alive():
-            print(f'\n--- Раунд {round_num} ---')
-
-            # Проверка активации способностей
-            self.events.check_abilities()
+        while self.player_ship.is_alive() and self.enemy_ship.is_alive():
+            print(f'--- Раунд {round_num} ---')
 
             # Ход игрока
-            self.events.attack(self.player, self.enemy)
+            self.events.use_skill(self.player_ship, self.enemy_ship)
+            self.events.attack(self.player_ship, self.enemy_ship)
 
-            if not self.enemy.is_alive():
+            if not self.enemy_ship.is_alive():
                 break
 
             # Ход противника
-            self.events.attack(self.enemy, self.player)
+            self.events.use_skill(self.enemy_ship, self.player_ship)
+            self.events.attack(self.enemy_ship, self.player_ship)
 
             round_num += 1
 
-        self._declare_winner()
+        self.declare_winner()
 
-    def _declare_winner(self):
-        """Объявление победителя"""
-        print('\n' + '=' * 60)
-        print('БИТВА ОКОНЧЕНА')
-        print('=' * 60)
-
-        if self.player.is_alive():
-            print(f'🏆 ПОБЕДА: {self.player.name}')
-            print(f'   Осталось HP: {self.player.hp}/{self.player.max_hp}')
+    def declare_winner(self):
+        print('\n___БИТВА ОКОНЧЕНА___')
+        if self.player_ship.is_alive():
+            print(f'ПОБЕДА: {self.player_ship.name}')
         else:
-            print(f'💀 ПОРАЖЕНИЕ: {self.enemy.name} победил')
-            print(f'   У него осталось HP: {self.enemy.hp}/{self.enemy.max_hp}')
+            print(f'ПОРАЖЕНИЕ: {self.enemy_ship.name} победил')
 
         print('\nЛог битвы:')
         for entry in self.events.get_log():
-            print(f'  • {entry}')
+            print(f'  {entry}')
