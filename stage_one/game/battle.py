@@ -17,15 +17,43 @@ class Battle():
             print(f'--- Раунд {round_num} ---')
 
             # Ход игрока
-            self.events.use_skill(self.player_ship, self.enemy_ship)
-            self.events.attack(self.player_ship, self.enemy_ship)
+            player_skill = self.events.use_skill(self.player_ship, self.enemy_ship)
+
+            # Проверка уклонения противника
+            enemy_skill = self.events.use_skill(self.enemy_ship, self.player_ship)
+            if self.events.check_dodge(enemy_skill, self.enemy_ship):
+                self.events.log_dodge(self.player_ship, self.enemy_ship)
+            else:
+                # Применяем усиление урона игрока
+                damage = self.events.apply_skill_effect(player_skill, self.player_ship, self.enemy_ship)
+
+                # Применяем защиту противника
+                actual_damage = self.events.apply_defense(enemy_skill, damage, self.enemy_ship)
+
+                # Наносим урон
+                self.enemy_ship.hp -= actual_damage
+                self.events.log_attack(self.player_ship, self.enemy_ship, actual_damage)
 
             if not self.enemy_ship.is_alive():
                 break
 
             # Ход противника
-            self.events.use_skill(self.enemy_ship, self.player_ship)
-            self.events.attack(self.enemy_ship, self.player_ship)
+            enemy_skill = self.events.use_skill(self.enemy_ship, self.player_ship)
+
+            # Проверка уклонения игрока
+            player_skill = self.events.use_skill(self.player_ship, self.enemy_ship)
+            if self.events.check_dodge(player_skill, self.player_ship):
+                self.events.log_dodge(self.enemy_ship, self.player_ship)
+            else:
+                # Применяем усиление урона противника
+                damage = self.events.apply_skill_effect(enemy_skill, self.enemy_ship, self.player_ship)
+
+                # Применяем защиту игрока
+                actual_damage = self.events.apply_defense(player_skill, damage, self.player_ship)
+
+                # Наносим урон
+                self.player_ship.hp -= actual_damage
+                self.events.log_attack(self.enemy_ship, self.player_ship, actual_damage)
 
             round_num += 1
 
