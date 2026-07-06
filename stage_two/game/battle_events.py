@@ -1,10 +1,11 @@
 import random
-from .ships_preparation import ShipsPreparation
+from stage_two.entities.entities_config import LOCATIONS
 
 
 class Events():
-    def __init__(self):
+    def __init__(self, location):
         self.log = []
+        self.location = location
 
     def attack(self, attacker, defender):
         damage = attacker.attack(defender)
@@ -70,6 +71,66 @@ class Events():
             print(log_entry)
             return max(1, reduced_damage)
         return damage
+
+    def random_event(self, player_ship, enemy_ship):
+        """Проверяет и применяет случайное событие локации"""
+        events_pool = LOCATIONS[self.location]['events']
+
+        # 30% шанс, что событие произойдёт в этом раунде
+        if not random.choice([True, False]) and random.random() > 0.3:
+            return
+
+        # Выбираем случайное событие из пула
+        event = random.choice(events_pool)
+
+        # Проверяем шанс конкретного события
+        if random.random() > event['chance']:
+            return
+
+        # Применяем эффект события
+        self._apply_event_effect(event, player_ship, enemy_ship)
+
+    def _apply_event_effect(self, event, player_ship, enemy_ship):
+        """Применяет эффект события к кораблям"""
+        event_name = event['name']
+        effect = event['effect']
+        value = event['value']
+        target = event['target']
+
+        log_entry = f'⚡ Событие: {event_name}'
+        self.log.append(log_entry)
+        print(log_entry)
+
+        # Определяем цели
+        if target == 'all':
+            targets = [player_ship, enemy_ship]
+        elif target == 'random':
+            targets = [random.choice([player_ship, enemy_ship])]
+        else:
+            targets = []
+
+        for ship in targets:
+            if effect == 'speed_down':
+                ship.speed = max(1, int(ship.speed * value))
+                print(f'  → {ship.name}: скорость снижена до {ship.speed}')
+            elif effect == 'speed_up':
+                ship.speed = int(ship.speed * value)
+                print(f'  → {ship.name}: скорость увеличена до {ship.speed}')
+            elif effect == 'damage_down':
+                ship.damage = max(1, int(ship.damage * value))
+                print(f'  → {ship.name}: урон снижен до {ship.damage}')
+            elif effect == 'damage':
+                ship.hp = max(0, ship.hp - value)
+                print(f'  → {ship.name} получает {value} урона (осталось {ship.hp} HP)')
+            elif effect == 'damage_taken':
+                ship.hp = max(0, ship.hp - value)
+                print(f'  → {ship.name} получает {value} урона (осталось {ship.hp} HP)')
+            elif effect == 'heal':
+                ship.hp = min(ship.base_hp, ship.hp + value)
+                print(f'  → {ship.name} восстанавливает {value} HP (теперь {ship.hp} HP)')
+            elif effect == 'armor_down':
+                ship.armor = max(0, int(ship.armor * value))
+                print(f'  → {ship.name}: броня снижена до {ship.armor}')
 
     def log_attack(self, attacker, defender, damage):
         """Логирует атаку"""

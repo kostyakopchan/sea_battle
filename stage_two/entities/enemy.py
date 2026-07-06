@@ -1,5 +1,5 @@
 import random
-from stage_one.entities.entities_config import SHIP_TYPES
+from stage_two.entities.entities_config import SHIP_TYPES
 
 
 class Enemy():
@@ -11,6 +11,12 @@ class Enemy():
         self.damage = self.set_damage()
         self.armor = self.set_armor()
         self.skill = self.set_skill()
+
+        # Базовые значения для модификаторов
+        self.base_hp = self.hp
+        self.base_speed = self.speed
+        self.base_damage = self.damage
+        self.base_armor = self.armor
 
     def set_type(self):
         return random.choice(list(SHIP_TYPES.keys()))
@@ -29,6 +35,13 @@ class Enemy():
 
     def set_skill(self):
         return SHIP_TYPES[self.type]['skill']
+
+    def apply_time_modifiers(self, time_modifiers):
+        """Применяет модификаторы времени суток к ТТХ"""
+        self.hp = int(self.base_hp * time_modifiers['hp'])
+        self.speed = int(self.base_speed * time_modifiers['speed'])
+        self.damage = int(self.base_damage * time_modifiers['damage'])
+        self.armor = int(self.base_armor * time_modifiers['armor'])
 
     def attack(self, target):
         damage = max(1, self.damage - target.armor)
