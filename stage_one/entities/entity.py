@@ -40,9 +40,34 @@ class Ship:
 
     def attack(self, target):
         """Атаковать цель"""
-        actual_damage = max(0, self.damage - target.armor)
-        target.hp -= actual_damage
-        return actual_damage
+        raw_damage = max(1, self.damage - target.armor)
+        target.hp -= raw_damage
+        return raw_damage
+
+    def use_ability(self, target=None):
+        """
+        Использование способности корабля.
+        Возвращает модификатор урона или информацию о действии.
+        """
+        from random import random
+
+        # 30% шанс активации способности
+        if random() >= 0.3:
+            return None
+
+        if self.type == 'Броненосец':
+            # Сопротивление урону: снижает входящий урон на 50% на один ход
+            return {'type': 'defense', 'value': 0.5}
+
+        elif self.type == 'Торпедный катер':
+            # Увеличенная скорость: шанс уклониться от атаки
+            return {'type': 'dodge', 'value': True}
+
+        elif self.type == 'Противокорабельная лодка':
+            # Увеличенный урон: следующая атака наносит x2 урона
+            return {'type': 'damage_boost', 'value': 2.0}
+
+        return None
 
     def is_alive(self):
         """Проверка жив ли корабль"""

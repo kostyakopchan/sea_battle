@@ -18,6 +18,9 @@ class Battle:
         while self.player.is_alive() and self.enemy.is_alive():
             print(f'\n--- Раунд {round_num} ---')
 
+            # Проверка активации способностей
+            self.events.check_abilities()
+
             # Ход игрока
             self.events.attack(self.player, self.enemy)
 
