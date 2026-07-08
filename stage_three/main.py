@@ -1,4 +1,4 @@
-from stage_two.game.battle import Battle
+from stage_three.game.battle import Battle
 
 
 if __name__ == '__main__':
