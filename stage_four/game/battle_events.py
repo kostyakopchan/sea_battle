@@ -1,5 +1,5 @@
 import random
-from stage_three.entities.entities_config import LOCATIONS
+from stage_four.entities.entities_config import LOCATIONS
 
 
 class Events():

@@ -1,7 +1,7 @@
 import questionary
-from stage_three.entities.enemy import Enemy
-from stage_three.entities.player import Player
-from stage_three.entities.entities_config import LOCATIONS, TIME_OF_DAY
+from stage_four.entities.enemy import Enemy
+from stage_four.entities.player import Player
+from stage_four.entities.entities_config import LOCATIONS, TIME_OF_DAY
 
 
 class ShipsPreparation(Enemy, Player):

@@ -1,5 +1,5 @@
 import random
-from stage_three.entities.entities_config import SHIP_TYPES, POINTS_PER_STAT, TOTAL_POINTS
+from stage_four.entities.entities_config import SHIP_TYPES, POINTS_PER_STAT, TOTAL_POINTS
 
 
 class Enemy():
