@@ -1,6 +1,6 @@
 from .battle_events import Events
 from .ships_preparation import ShipsPreparation
-from stage_two.entities.entities_config import TIME_OF_DAY, LOCATIONS
+from stage_three.entities.entities_config import TIME_OF_DAY, LOCATIONS
 
 
 class Battle():
@@ -11,6 +11,9 @@ class Battle():
         self.time_of_day = self.preparation.get_time_of_day()
         self.events = Events(self.location)
 
+        # Показываем информацию о кораблях
+        self.preparation.show_ships_info()
+
         # Применяем модификаторы времени суток
         self._apply_time_modifiers()
 
@@ -20,9 +23,9 @@ class Battle():
         self.player_ship.apply_time_modifiers(time_modifiers)
         self.enemy_ship.apply_time_modifiers(time_modifiers)
 
-        print(f'\n___Условия боя___')
-        print(f'Локация: {self.location} — {LOCATIONS[self.location]["description"]}')
-        print(f'Время суток: {self.time_of_day}')
+        print(f'\n___Модификаторы времени суток___')
+        print(f'HP: ×{time_modifiers["hp"]}, Скорость: ×{time_modifiers["speed"]}, '
+              f'Урон: ×{time_modifiers["damage"]}, Броня: ×{time_modifiers["armor"]}')
         print(f'___')
 
     def fight(self):
